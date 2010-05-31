@@ -100,8 +100,8 @@
 ;; grow lines
   '(automata
     (entities
-     ((NOTHING   :asymbol :_ :ascii "_" :value 0 )) ;asymbol means alt symbol
-      (SOMETHING :asymbol :@ :ascii "@" :value 222))
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (SOMETHING :asymbol :@ :ascii "@" :value 222))
     (match 
      (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3)
      (replace-with
@@ -178,15 +178,15 @@
 (defun parse-pattern (p)
   (list-to-array (nth 1 p) (nth 2 p) (nth 3 p)))
 
-(defgeneric parse-args (action))
-(defmethod parse-args (action ... XXX FINISH
-
+(defgeneric parse-args (action args))
+(defmethod parse-args ((action replace-with) args) 
+           (setf (match-pattern action) (parse-pattern (first args)))
+           action)
 ; this is unsafe!
 (defun parse-action (a)
   (let ((action (make-instance (first a))))
-    (progn 
-      (parse-args action (rest a))
-      action)))
+    (parse-args action (rest a))
+    action))
 
 
 (defun parse-match (m)
@@ -205,7 +205,7 @@
 (defclass symbol-table ()
   ((table :initarg :table :accessor table)))
 
-(defgeneric resolve-symbol(symbol-table))
+(defgeneric resolve-symbol(symbol-table sym))
 (defmethod resolve-symbol ((symt symbol-table) sym)
   (cadr (assoc sym (table symt))))
 
@@ -218,6 +218,8 @@
 ; string concat by space
 (defun s+ (l)
   (format nil "~{ ~A~}" l))
+(defun s% (l)
+  (format nil "~{~%~A~}" l))
 
 
 (defun automata-eval (a)
@@ -235,24 +237,23 @@
              (format nil "typdef enum ENTITY { ~{ ~A~^,~} } Entity;"
                      (mapcar 
                       (lambda (e) (s+ 
-                                   (list (string (esymbol e)) 
+                                   (list (symbol-name (esymbol e)) 
                                          "=" 
                                          (format nil "~D" (value e)))))
                       ents)))
            (generate-palette (ents)
              (format nil "Entity types[] = { ~{ ~A~^,~} };"
-                     (mapcar (lambda (e) (string (esymbol e))) ents)))
+                     (mapcar (lambda (e) (symbol-name (esymbol e))) ents)))
            (generate-to-char-function (ents)
              (format nil "char entity_to_char( Entity e ) { ~%  select ( e ) { ~{ ~A~} default: return '?'; } }~%"
                      (mapcar (lambda (e) 
-                               (format nil "case ~A: return '~A';~%" (string (esymbol e)) (ascii e))) ents))) 
+                               (format nil "case ~A: return '~A';~%" (symbol-name (esymbol e)) (ascii e))) ents))) 
 
            )
       (if (not (eq 'AUTOMATA (car a))) (error "not an automata!"))
       (let* ((l (rest a))
              (entity-defs (get-entity-defs l))
              (match-defs (get-match-defs l))
-             (whatever (print match-defs))
              (entities (mapcar #'parse-entity entity-defs))
              (symbol-table (build-symbol-table entities))
              (matches (mapcar #'parse-match match-defs))
@@ -260,7 +261,7 @@
              (palette (generate-palette entities)) ; string
              (to-char-fun (generate-to-char-function entities)) ; string
              )
-        (s+ (list enum palette to-char-fun)))))
+        (s% (list enum palette to-char-fun)))))
   ; X parse matches
   ; X parse patterns
   ; X generate enum for entities
