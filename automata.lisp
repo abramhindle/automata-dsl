@@ -179,7 +179,7 @@
   (list-to-array (nth 1 p) (nth 2 p) (nth 3 p)))
 
 (defgeneric parse-args (action))
-
+(defmethod parse-args (action ... XXX FINISH
 
 ; this is unsafe!
 (defun parse-action (a)
@@ -191,9 +191,10 @@
 
 (defun parse-match (m)
   (let* ((match-sym (first m))
-         (match-pattern (parse-pattern (assoc 'pattern m)))
-         (name (or (assoc 'name m) (string (gensym))))
-         (action (parse-action (first (last m)))))
+         (mr (rest m))
+         (match-pattern (parse-pattern (assoc 'pattern mr)))
+         (name (or (assoc 'name mr) (string (gensym))))
+         (action (parse-action (first (last mr)))))
     (if (not (equalp 'match match-sym)) (error "not a match!"))
     (make-instance 'pattern-match 
                    :name name
@@ -204,6 +205,7 @@
 (defclass symbol-table ()
   ((table :initarg :table :accessor table)))
 
+(defgeneric resolve-symbol(symbol-table))
 (defmethod resolve-symbol ((symt symbol-table) sym)
   (cadr (assoc sym (table symt))))
 
@@ -213,6 +215,7 @@
                   (mapcar (lambda (e) (list (esymbol e) (esymbol e))) entities)
                   (mapcar (lambda (e) (list (asymbol e) (esymbol e))) entities))))
 
+; string concat by space
 (defun s+ (l)
   (format nil "~{ ~A~}" l))
 
@@ -224,7 +227,7 @@
   ; - symbol table should use asymbol to ref itself as well
 
   (labels ((get-entity-defs (l) (cdr (assoc 'entities l)))
-           (get-match-defs (l) (find-if 
+           (get-match-defs (l) (remove-if-not
                              (lambda (x) (case (car x)
                                            (match T)
                                            (otherwise NIL))) l))
@@ -249,6 +252,7 @@
       (let* ((l (rest a))
              (entity-defs (get-entity-defs l))
              (match-defs (get-match-defs l))
+             (whatever (print match-defs))
              (entities (mapcar #'parse-entity entity-defs))
              (symbol-table (build-symbol-table entities))
              (matches (mapcar #'parse-match match-defs))
