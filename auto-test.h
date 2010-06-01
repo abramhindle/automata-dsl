@@ -1,7 +1,8 @@
-
 #define NTYPES 2
 
-typedef enum ENTITY {   NOTHING = 0,  SOMETHING = 222 } Entity;
+typedef enum ENTITY {  NOTHING = 0, SOMETHING = 222 } Entity;
+#include "auto-test-h-include.c"
+
 Entity types[] = {  NOTHING, SOMETHING };
 char entity_to_char( Entity e ) { 
 switch ( e ) {
@@ -394,8 +395,291 @@ Entity G731[] = {  NOTHING, NOTHING, NOTHING, SOMETHING, SOMETHING, NOTHING, NOT
 #define G732_len 9
 Entity G732[] = {  NOTHING, NOTHING, NOTHING, SOMETHING, SOMETHING, SOMETHING, NOTHING, NOTHING, NOTHING };
 
+#define G630_INDEX 0
+#define G641_INDEX 1
+#define G644_INDEX 2
+#define G647_INDEX 3
+#define G650_INDEX 4
+#define G653_INDEX 5
+#define G656_INDEX 6
+#define G659_INDEX 7
+#define G662_INDEX 8
+#define G665_INDEX 9
+#define G668_INDEX 10
+#define G671_INDEX 11
+#define G674_INDEX 12
+#define G677_INDEX 13
+#define G680_INDEX 14
+#define G683_INDEX 15
+#define G686_INDEX 16
+#define G689_INDEX 17
+#define G692_INDEX 18
+#define G695_INDEX 19
+#define G698_INDEX 20
+#define G701_INDEX 21
+#define G704_INDEX 22
+#define G707_INDEX 23
+#define G710_INDEX 24
+#define G713_INDEX 25
+#define G716_INDEX 26
+#define G719_INDEX 27
+#define G722_INDEX 28
+#define G725_INDEX 29
+#define G728_INDEX 30
+#define G731_INDEX 31
+
 #define match_patterns_len 32
 Entity * match_patterns[] = {  G630, G641, G644, G647, G650, G653, G656, G659, G662, G665, G668, G671, G674, G677, G680, G683, G686, G689, G692, G695, G698, G701, G704, G707, G710, G713, G716, G719, G722, G725, G728, G731 };
 
 #define match_patterns_len 32
 Entity * replace_patterns[] = {  G631, G642, G645, G648, G651, G654, G657, G660, G663, G666, G669, G672, G675, G678, G681, G684, G687, G690, G693, G696, G699, G702, G705, G708, G711, G714, G717, G720, G723, G726, G729, G732 };
+
+void automata_matcher( Entity * entities, int * matches, int x, int y) {
+switch( ENTITY_AT(0,0, x, y) ) {
+
+case NOTHING:
+  switch( ENTITY_AT(1,0, x, y) ) {
+
+  case SOMETHING:
+    switch( ENTITY_AT(2,0, x, y) ) {
+
+    case NOTHING:
+      switch( ENTITY_AT(0,1, x, y) ) {
+
+      case NOTHING:
+        switch( ENTITY_AT(1,1, x, y) ) {
+
+        case SOMETHING:
+          switch( ENTITY_AT(2,1, x, y) ) {
+
+          case NOTHING:
+            switch( ENTITY_AT(0,2, x, y) ) {
+
+            case NOTHING:
+              switch( ENTITY_AT(1,2, x, y) ) {
+
+              case NOTHING:
+                switch( ENTITY_AT(2,2, x, y) ) {
+
+                case NOTHING:
+                  PATTERN_MATCH_AT( G689_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G695_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G713_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G719_INDEX , x, y );
+
+                break;
+                default: break;
+                };
+
+              break;
+              default: break;
+              };
+
+            break;
+            default: break;
+            };
+
+          break;
+          default: break;
+          };
+
+        break;
+        default: break;
+        };
+
+      break;
+      default: break;
+      };
+
+    break;
+    default: break;
+    };
+
+  break;
+  case NOTHING:
+    switch( ENTITY_AT(2,0, x, y) ) {
+
+    case NOTHING:
+      switch( ENTITY_AT(0,1, x, y) ) {
+
+      case NOTHING:
+        switch( ENTITY_AT(1,1, x, y) ) {
+
+        case SOMETHING:
+          switch( ENTITY_AT(2,1, x, y) ) {
+
+          case NOTHING:
+            switch( ENTITY_AT(0,2, x, y) ) {
+
+            case NOTHING:
+              switch( ENTITY_AT(1,2, x, y) ) {
+
+              case NOTHING:
+                switch( ENTITY_AT(2,2, x, y) ) {
+
+                case NOTHING:
+                  PATTERN_MATCH_AT( G630_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G641_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G644_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G647_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G650_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G653_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G656_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G659_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G662_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G665_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G668_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G671_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G674_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G677_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G680_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G683_INDEX , x, y );
+
+                break;
+                default: break;
+                };
+
+              break;
+              case SOMETHING:
+                switch( ENTITY_AT(2,2, x, y) ) {
+
+                case NOTHING:
+                  PATTERN_MATCH_AT( G686_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G692_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G710_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G716_INDEX , x, y );
+
+                break;
+                default: break;
+                };
+
+              break;
+              default: break;
+              };
+
+            break;
+            default: break;
+            };
+
+          break;
+          case SOMETHING:
+            switch( ENTITY_AT(0,2, x, y) ) {
+
+            case NOTHING:
+              switch( ENTITY_AT(1,2, x, y) ) {
+
+              case NOTHING:
+                switch( ENTITY_AT(2,2, x, y) ) {
+
+                case NOTHING:
+                  PATTERN_MATCH_AT( G698_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G701_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G722_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G725_INDEX , x, y );
+
+                break;
+                default: break;
+                };
+
+              break;
+              default: break;
+              };
+
+            break;
+            default: break;
+            };
+
+          break;
+          default: break;
+          };
+
+        break;
+        default: break;
+        };
+
+      break;
+      case SOMETHING:
+        switch( ENTITY_AT(1,1, x, y) ) {
+
+        case SOMETHING:
+          switch( ENTITY_AT(2,1, x, y) ) {
+
+          case NOTHING:
+            switch( ENTITY_AT(0,2, x, y) ) {
+
+            case NOTHING:
+              switch( ENTITY_AT(1,2, x, y) ) {
+
+              case NOTHING:
+                switch( ENTITY_AT(2,2, x, y) ) {
+
+                case NOTHING:
+                  PATTERN_MATCH_AT( G704_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G707_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G728_INDEX , x, y );
+
+                  PATTERN_MATCH_AT( G731_INDEX , x, y );
+
+                break;
+                default: break;
+                };
+
+              break;
+              default: break;
+              };
+
+            break;
+            default: break;
+            };
+
+          break;
+          default: break;
+          };
+
+        break;
+        default: break;
+        };
+
+      break;
+      default: break;
+      };
+
+    break;
+    default: break;
+    };
+
+  break;
+  default: break;
+  };
+
+break;
+default: break;
+};
+
+}

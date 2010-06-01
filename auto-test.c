@@ -37,16 +37,6 @@ the original source code.  */
 
 /* change this if you add a new type */
 #define COFF 0
-
-#include "auto-test.h"
-#ifndef MWIDTH 
-#define MWIDTH 3
-#endif
-#ifndef MHEIGHT
-#define MHEIGHT 3
-#endif
-
-
 #define WEIGHT(VAL) VAL
 #define MAXBUFFER 1024
 #define RESW 320
@@ -57,6 +47,20 @@ the original source code.  */
 #define BOUNDS( X, Y) ((X >= 0 && X < RESW) && (Y >= 0 && Y < RESH))
 #define XYINDEX( X , Y)  (RESW * Y + X)
 #define IMPOSSIBLE (-1)
+
+
+#define ENTITY_AT( DX, DY, X, Y ) ( entity_at( entities, DX, DY, X, Y ) )
+#define PATTERN_MATCH_AT( INDEX, X, Y ) ( matches[ INDEX ]++ )
+
+#include "auto-test.h"
+#ifndef MWIDTH 
+#define MWIDTH 3
+#endif
+#ifndef MHEIGHT
+#define MHEIGHT 3
+#endif
+
+
 
 void swap_entities( Entity * arr , int i, int j ) {
   Entity tmp = arr[i];

@@ -274,9 +274,9 @@
 
 ; string concat by space
 (defun s+ (l)
-  (format nil "~{ ~A~}" l))
+  (format nil "~{~A~^ ~}" l))
 (defun s% (l)
-  (format nil "~{~%~A~}" l))
+  (format nil "~{~A~^~%~}" l))
 
 (defun flatten-2d-array (arr w h) 
   (let ((n (* w h)))
@@ -369,39 +369,134 @@
  (defun tlsnd (l) (mapcar #'tsnd l))
 ;;     ; (cond (0 0) (NOTHING (cond (0 1) (NOTHING) (SOMETHING))) (SOMETHING (cond (0 1) (NOTHING) (SOMETHING))))
 ;;;; XXX TEST THIS IN THE MORNING
- (defun mk-logic-tree (symbol-table entities matches)
-     (let ((mwidth (loop for x in matches maximize (width x)))
-           (mheight (loop for x in matches maximize (height x))))
-       (labels ((get-entries-at (x y l)
-                  (loop for z in l
-                       for c = (get-xy z x y)
-                       collect (tuple c z) when c))
-                (get-symbols-of-tuples (tuples)
-                  (remove-duplicates (mapcar #'tfst tuples)))
-                (grep-set (sym sset)
-                  (remove-if-not (lambda (x) (equalp (tfst x) sym)) sset))
-                (partition-set (syms sset)
-                  (loop
-                       for sym = syms
-                       collect (tuple sym (grep-set sym sset))))
-                (per-partition (part)
-                  (let* ((sym (tfst part))
-                         (sset (tsnd part))
-                         (xy (next-xy x y mwidth mheight))
-                         (tl (tlsnd sset)))
-                    (if xy                        
-                        (list sym (tree-helper (first xy) (second xy) tl))
-                        (list sym (list matches (mapcar #'pattern-name tl))))))
-                (tree-helper (x y sset) ; set is of matches
-                  (if (and sset (< x mwidth) (< y mheight))
-                      (let ((nset (get-entries-at x y sset))
-                            (syms (get-symbols-of-tuples nset))
-                            (parts (partition-set syms)))
-                        (list 'cond (list x y) 
-                              (mapcar #'per-partition parts)))
-                      '())))
-         (tree-helper 0 0 matches))))
+(defun mk-logic-tree (symbol-table entities matches)
+  (let ((mwidth (loop for x in matches maximize (width x)))
+        (mheight (loop for x in matches maximize (height x))))
+    (labels ((get-entries-at (x y l)
+               (loop for z in l
+                  for c = (get-xy z x y)
+                  when c collect (tuple c z)))
+             (get-symbols-of-tuples (tuples)
+               (remove-duplicates (mapcar #'tfst tuples)))
+             (grep-set (sym sset)
+               (remove-if-not (lambda (x) (equalp (tfst x) sym)) sset))
+             (partition-set (syms sset)
+               (loop
+                  for sym in syms
+                  collect (tuple sym (grep-set sym sset))))
+             (per-partition (x y part)
+               (let* ((sym (tfst part))
+                      (sset (tsnd part))
+                      (xy (next-xy x y mwidth mheight))
+                      (tl (tlsnd sset)))
+                 (if xy                        
+                     (list sym (tree-helper (first xy) (second xy) tl))
+                     (list sym (append (list 'matches) (mapcar (lambda (x) (pattern-name (match-pattern x))) tl))))))
+             (tree-helper (x y sset) ; set is of matches
+               (if (and sset (< x mwidth) (< y mheight))
+                   (let* ((nset (get-entries-at x y sset))
+                          (syms (get-symbols-of-tuples nset))
+                          (parts (partition-set syms nset)))
+                     (append (list 'case (list x y))
+                             (mapcar (lambda (p) (per-partition x y p)) parts)))
+                   '())))
+      (tree-helper 0 0 matches))))
 
+(defun logic-tree-to-C (symt entities matches tree)
+  (labels ((indentation (depth) (make-string (* 2 depth) :initial-element #\  ))
+           (helper (depth leaf)
+             (case (first leaf)
+               ('case (let ((dxdy (second leaf))
+                           (cases (cddr leaf))
+                           (in (indentation depth)))
+                       (concatenate 'string
+                                    (format nil "~Aswitch( ENTITY_AT(~D,~D, x, y) ) {~%" in (first dxdy) (second dxdy))
+                                    (format nil "~{~%~A~}"  ; join w/ newline
+                                            (mapcar 
+                                             (lambda (c) 
+                                               (let* ((sym (first c))
+                                                      (ssym (symbol-name (esymbol (resolve-symbol symt sym))))
+                                                      (exp (second c)))
+                                                 (format nil "~Acase ~A:~%~A~%~Abreak;" 
+                                                         in 
+                                                         ssym 
+                                                         (helper (+ 1 depth) exp) 
+                                                         in))) 
+                                             cases))
+                                    (format nil "~%~Adefault: break;~%~A};~%" in in))))
+               ('matches (let (;(matches-sym (first leaf))
+                              (matching-pattern-names (rest leaf))
+                              (in (indentation depth)))
+                           (s%
+                            (mapcar (lambda (pattern)
+                                        ; might have to put an index here!
+                                      (format nil "~APATTERN_MATCH_AT( ~A_INDEX , x, y );~%" in pattern))
+                                    matching-pattern-names))))
+               (otherwise (error (s+ "What was this" (string leaf)))))))
+    (helper 0 tree)))
+                                    
+  
+  
+
+(defun mk-logic-tree-test ()
+  (let* ((e1 (parse-entity '(NOTHING   :asymbol :_ :ascii "_" :value 0 )))
+         (e2 (parse-entity '(SOMETHING :asymbol :@ :ascii "@" :value 222)))
+         (entities (list e1 e2))
+         (symt (build-symbol-table entities))
+         (m1 (parse-match 
+             '(match 
+               (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3)
+               (replace-with
+                (pattern (:_ :@ :_  :_ :@ :_  :_ :_ :_) 3 3))))
+           )
+         (m2 (parse-match 
+             '(match 
+               (pattern (:@ :@ :@  :@ :@ :@  :@ :@ :@) 3 3)
+               (replace-with
+                (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3))))
+           )
+         (m3 (parse-match 
+             '(match 
+               (pattern (:@ :@ :@  :@ :@ :@  :@ :@ :_) 3 3)
+               (replace-with
+                (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3))))
+           )
+         (n1 (parse-match 
+             '(match 
+               (pattern (:_ :_  :_ :@) 2 2)
+               (replace-with
+                (pattern (:_ :@ :_  :@) 2 2))))
+           )
+         (n2 (parse-match 
+             '(match 
+               (pattern (:_ :_  :@ :@) 2 2)
+               (replace-with
+                (pattern (:_ :@ :_  :@) 2 2))))
+           )
+
+         (n3 (parse-match 
+             '(match 
+               (pattern (:@ :@ :@ :@) 2 2)
+               (replace-with
+                (pattern (:_ :_ :_  :@ ) 2 2))))
+           )
+         (n4 (parse-match 
+             '(match 
+               (pattern (:@ :@ :@ :_) 2 2)
+               (replace-with
+                (pattern (:_ :_ :_ :@) 3 3))))
+           )
+         (matches (list m1 m2 m3))
+         (matches2 (list n1 n2 n3 n4)))
+    (let ((tree  (mk-logic-tree symt entities matches2)))
+      (list tree 
+            (logic-tree-to-C symt entities matches2 tree)))))
+
+    
+
+(defun make-logic-function (logic-str)
+  (format nil "void automata_matcher( Entity * entities, int * matches, int x, int y) {~%~A~%}~%" logic-str))
+    
 
 ; basically we just copy the classes
 (defgeneric prototype-action-replace (action r))
@@ -473,7 +568,15 @@
 
            (generate-pattern-match-arr (matches)
              (let ((l (mapcar (lambda (m) (pattern-name (match-pattern m))) matches)))
-               (format nil "#define match_patterns_len ~D~%Entity * match_patterns[] = { ~{ ~A~^,~} };~%" (length l) l)))
+               (concatenate 'string
+                            (format nil "~{~A~}"
+                                    (loop
+                                       for m in l
+                                       for y from 0
+                                       collect (format nil "#define ~A_INDEX ~D~%" m y)))
+
+                            (format nil "~%")
+                            (format nil "#define match_patterns_len ~D~%Entity * match_patterns[] = { ~{ ~A~^,~} };~%" (length l) l))))
            (generate-replace-match-arr (matches)
              (let ((l (mapcar (lambda (m) (pattern-name (replace-pattern m))) matches)))
                (format nil "#define match_patterns_len ~D~%Entity * replace_patterns[] = { ~{ ~A~^,~} };~%" (length l) l)))
@@ -486,12 +589,15 @@
            )
       (if (not (eq 'AUTOMATA (car a))) (error "not an automata!"))
       (let* ((l (rest a))
+
+             (incstr (format nil "#include \"auto-test-h-include.c\"~%"))
+
              (entity-defs (get-entity-defs l))
              (match-defs (get-match-defs l))
              (entities (mapcar #'parse-entity entity-defs))
              (symbol-table (build-symbol-table entities))
-             (matches (mapcar #'parse-match match-defs))
-             (matches (rotate-and-reflect-matches matches))
+             (matches-alpha (mapcar #'parse-match match-defs))
+             (matches (rotate-and-reflect-matches matches-alpha))
              ; TODO rotate matches etc.
              (def-ntypes (generate-n-types entities)) ; string
              (enum (generate-enum entities)) ; string
@@ -500,12 +606,14 @@
              (replacements (generate-replacement-patterns symbol-table matches)) ; string list
              (pattern-match-arr (generate-pattern-match-arr matches))
              (replace-match-arr (generate-replace-match-arr matches))
-
+             (logic (mk-logic-tree symbol-table entities matches))
+             (logic-str (logic-tree-to-C symbol-table entities matches logic))
+             (logic-function (make-logic-function logic-str))
              ;  (logic-block (generate-logic-block symbol-table entities matches))
              )
         (with-open-file (f "auto-test.h" :direction :output)
           (format f "~A"
-           (s% (append (list def-ntypes enum palette to-char-fun) replacements (list pattern-match-arr replace-match-arr)))
+           (s% (append (list def-ntypes enum incstr  palette to-char-fun) replacements (list pattern-match-arr replace-match-arr logic-function)))
            )))))
   ; X parse matches
   ; X parse patterns
