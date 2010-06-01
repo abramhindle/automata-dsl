@@ -114,6 +114,7 @@ int main(int v,char**argv){
   SDL_MouseMotionEvent m;
   int * schedule = malloc( sizeof(int) * RESW * RESH );
   int * pat_schedule = malloc( sizeof(int) * match_patterns_len );
+  int * matches = malloc( sizeof(int) * match_patterns_len );
   Uint8 * bmp = (Uint8*) s->pixels;
   Entity * entities = malloc( sizeof(Entity) * RESW * RESH );
   Entity cursor = types[0];
@@ -145,7 +146,32 @@ int main(int v,char**argv){
       y = j / RESW;      
       /* LOGIC HERE */
       shuffle(pat_schedule, match_patterns_len);
-
+      for (pat = 0; pat < match_patterns_len; pat++) {
+        matches[pat] = 0;
+      }
+      automata_matcher( entities, matches, x, y );
+     
+      for (pat = 0; pat < match_patterns_len; pat++) {
+        int rpat = pat_schedule[pat];
+	if (matches[rpat]) {
+          /* Entity  * pattern  = match_patterns[rpat]; */
+          Entity  * rpattern = replace_patterns[rpat];
+          int patwidth = MWIDTH; /* fix later */
+          int patheight = MHEIGHT;
+          for (dy = 0; dy < patheight; dy++) {
+            for (dx = 0; dx < patwidth; dx++) {
+              if ((x + dx >= RESW) || (y + dy >= RESH)) {
+                /* neg */
+              } else {
+                entities[j + dx + RESW * dy] = rpattern[dy * patwidth + dx];
+              }
+            }
+          }
+	  break; /* do it once? */
+	}
+      } /* per pattern */
+ 
+#ifdef UGH
       for (pat = 0; pat < match_patterns_len; pat++) {
         int rpat = pat_schedule[pat];
         Entity  * pattern  = match_patterns[rpat];
@@ -176,6 +202,7 @@ int main(int v,char**argv){
           }
         }
       } /* per pattern */
+#endif
     } /* per pixel */
 
     /* now draw the buffer! */
