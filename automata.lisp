@@ -197,6 +197,9 @@
   (make-pattern
    (list-to-array (nth 1 p) (nth 2 p) (nth 3 p))))
 
+(defmethod replace-pattern (pattern-match)
+  (match-pattern (action pattern-match)))
+
 ;; this seems like bad news
 (defgeneric patterns-of-match (pattern-match))
 (defmethod  patterns-of-match (pattern-match)
@@ -204,7 +207,7 @@
   ; then make a  list
   (list 
    (match-pattern pattern-match)
-   (match-pattern (action pattern-match))))
+   (replace-pattern pattern-match)))
   
 
 (defgeneric parse-args (action args))
@@ -375,6 +378,10 @@
            (generate-pattern-match-arr (matches)
              (let ((l (mapcar (lambda (m) (pattern-name (match-pattern m))) matches)))
                (format nil "#define match_patterns_len ~D~%Entity * match_patterns[] = { ~{ ~A~^,~} };~%" (length l) l)))
+           (generate-replace-match-arr (matches)
+             (let ((l (mapcar (lambda (m) (pattern-name (replace-pattern m))) matches)))
+               (format nil "#define match_patterns_len ~D~%Entity * replace_patterns[] = { ~{ ~A~^,~} };~%" (length l) l)))
+
            (generate-n-types (entities)
              (format nil "#define NTYPES ~D~%" (length entities)))
                   
@@ -394,9 +401,14 @@
              (to-char-fun (generate-to-char-function entities)) ; string
              (replacements (generate-replacement-patterns symbol-table matches)) ; string list
              (pattern-match-arr (generate-pattern-match-arr matches))
+             (replace-match-arr (generate-replace-match-arr matches))
+
              ;  (logic-block (generate-logic-block symbol-table entities matches))
              )
-        (s% (append (list def-ntypes enum palette to-char-fun) replacements (list pattern-match-arr))))))
+        (with-open-file (f "auto-test.h" :direction :output)
+          (format f "~A"
+           (s% (append (list def-ntypes enum palette to-char-fun) replacements (list pattern-match-arr replace-match-arr)))
+           )))))
   ; X parse matches
   ; X parse patterns
   ; X generate enum for entities

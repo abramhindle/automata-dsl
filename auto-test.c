@@ -39,6 +39,13 @@ the original source code.  */
 #define COFF 0
 
 #include "auto-test.h"
+#ifndef MWIDTH 
+#define MWIDTH 3
+#endif
+#ifndef MHEIGHT
+#define MHEIGHT 3
+#endif
+
 
 #define WEIGHT(VAL) VAL
 #define MAXBUFFER 1024
@@ -112,9 +119,32 @@ int main(int v,char**argv){
       x = j % RESW;
       y = j / RESW;      
       /* LOGIC HERE */
-
-      
-      
+      for (pat = 0; pat < match_patterns_len; pat++) {
+        Entity * pattern  = match_patterns[pat];
+        Entity * rpattern = replace_patterns[pat];
+        int patwidth = MWIDTH; /* fix later */
+        int patheight = MHEIGHT;
+        int match = 0;
+        for (dy = 0; dy < patheight; dy++) {
+          for (dx = 0; dx < patwidth; dx++) {
+            if ((x + dx >= WIDTH) || (y + dy >= HEIGHT)) {
+            } else {
+              if ( entities[j + dx + RESW * y] ) {
+                match++;
+              }
+            }
+          }
+        }
+        if (match == WIDTH * HEIGHT) {
+          for (dy = 0; dy < patheight; dy++) {
+            for (dx = 0; dx < patwidth; dx++) {
+              if ((x + dx >= WIDTH) || (y + dy >= HEIGHT)) {
+                entities[j + dx + RESW * y] = rpattern[dy * patwidth + dx];
+              }
+            }
+          }
+        }
+      } /* per pattern */
     } /* per pixel */
 
     /* now draw the buffer! */
