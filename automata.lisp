@@ -423,7 +423,7 @@
                                                          (helper (+ 1 depth) exp) 
                                                          in))) 
                                              cases))
-                                    (format nil "~%~Adefault: break;~%~A};~%" in in))))
+                                    (format nil "~%~Adefault: return;~%~A};~%" in in))))
                ('matches (let (;(matches-sym (first leaf))
                               (matching-pattern-names (rest leaf))
                               (in (indentation depth)))

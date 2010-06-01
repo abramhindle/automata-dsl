@@ -105,6 +105,7 @@ void blank(Entity * entities) {
   }
 }
 
+#define BENCH 1
 
 int main(int v,char**argv){
 
@@ -122,6 +123,7 @@ int main(int v,char**argv){
   Entity entity;
   int brush = 9; /* brush size */
   atexit(SDL_Quit);
+  int frames = 0;
   SDL_WM_SetCaption("Auto",0);
   srand((unsigned int) time( NULL ));
   /* make the random schedule */
@@ -136,6 +138,9 @@ int main(int v,char**argv){
   clear( entities );
   shuffle(schedule, RESW * RESH);  
   while (!SDL_Flip(s)) {
+#ifdef BENCH
+    if (frames == 100) { exit(0); }
+#endif
 
     /* rand pixel schedule */
     /* there will be garbage at the edges */
@@ -216,6 +221,7 @@ int main(int v,char**argv){
         } /* if state */
       } /* event type */
     } /* Poll */
+    frames++;
   }
   exit(0);
   return 0;
