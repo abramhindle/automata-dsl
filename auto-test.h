@@ -34,8 +34,32 @@ Entity G619[] = {  NOTHING, NOTHING, NOTHING, NOTHING, SOMETHING, NOTHING, NOTHI
 #define G621_len 9
 Entity G621[] = {  NOTHING, SOMETHING, NOTHING, NOTHING, SOMETHING, NOTHING, NOTHING, SOMETHING, NOTHING };
 
-#define match_patterns_len 2
-Entity * match_patterns[] = {  G616, G619 };
 
-#define match_patterns_len 2
-Entity * replace_patterns[] = {  G618, G621 };
+#define G622_width 3
+#define G622_height 3
+#define G622_len 9
+Entity G622[] = {  NOTHING, SOMETHING, NOTHING, NOTHING, SOMETHING, NOTHING, NOTHING, NOTHING, NOTHING };
+
+
+#define G624_width 3
+#define G624_height 3
+#define G624_len 9
+Entity G624[] = {  NOTHING, SOMETHING, NOTHING, NOTHING, SOMETHING, NOTHING, SOMETHING, NOTHING, SOMETHING };
+
+
+#define G625_width 3
+#define G625_height 3
+#define G625_len 9
+Entity G625[] = {  SOMETHING, NOTHING, SOMETHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING };
+
+
+#define G627_width 3
+#define G627_height 3
+#define G627_len 9
+Entity G627[] = {  SOMETHING, NOTHING, SOMETHING, NOTHING, NOTHING, NOTHING, SOMETHING, NOTHING, SOMETHING };
+
+#define match_patterns_len 4
+Entity * match_patterns[] = {  G616, G619, G622, G625 };
+
+#define match_patterns_len 4
+Entity * replace_patterns[] = {  G618, G621, G624, G627 };

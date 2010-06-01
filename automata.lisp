@@ -109,7 +109,15 @@
     (match 
      (pattern (:_ :_ :_  :_ :@ :_  :_ :@ :_) 3 3)
      (replace-with
-      (pattern (:_ :@ :_  :_ :@ :_  :_ :@ :_) 3 3)))))
+      (pattern (:_ :@ :_  :_ :@ :_  :_ :@ :_) 3 3)))
+    (match 
+     (pattern (:_ :@ :_  :_ :@ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :_ :@ :_  :@ :_ :@) 3 3)))
+    (match 
+     (pattern (:@ :_ :@  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:@ :_ :@  :_ :_ :_  :@ :_ :@) 3 3)))))
 
 ;; Generate code like this:
 ; if ((entity_at 0 0 y x) == NOTHING) {

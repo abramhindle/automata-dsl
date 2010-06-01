@@ -85,6 +85,22 @@ void shuffle( int v[], int size ) {
   }
 }
 
+void clear(Entity * entities) {
+  for (int j = 0 ; j < RESW * RESH ; j++ ) {
+    if (rand_decision(9,10)) {
+      entities[j] = types[0];
+    } else {
+      entities[j] = types[1 % NTYPES];
+    }
+  }
+}
+
+void blank(Entity * entities) {
+  for (int i = 0 ; i < RESW * RESH; i++ ) {
+    entities[i] = types[0];
+  }
+}
+
 
 int main(int v,char**argv){
 
@@ -96,7 +112,7 @@ int main(int v,char**argv){
   Uint8 * bmp = (Uint8*) s->pixels;
   Entity * entities = malloc( sizeof(Entity) * RESW * RESH );
   Entity cursor = types[0];
-  int x, y, j, i, sched;
+  int x, y, j, i, sched, pat, dy, dx;
   int index;
   Entity entity;
   int brush = 9; /* brush size */
@@ -107,8 +123,8 @@ int main(int v,char**argv){
   /* and init Terrain and Entity */
   for (j = 0 ; j < RESW * RESH ; j++ ) {
     schedule[j] = j;
-    entities[j] = NOTHING;
   }
+  clear( entities );
   shuffle(schedule, RESW * RESH);  
   while (!SDL_Flip(s)) {
     /* rand pixel schedule */
@@ -120,26 +136,29 @@ int main(int v,char**argv){
       y = j / RESW;      
       /* LOGIC HERE */
       for (pat = 0; pat < match_patterns_len; pat++) {
-        Entity * pattern  = match_patterns[pat];
-        Entity * rpattern = replace_patterns[pat];
+        Entity  * pattern  = match_patterns[pat];
+        Entity  * rpattern = replace_patterns[pat];
         int patwidth = MWIDTH; /* fix later */
         int patheight = MHEIGHT;
         int match = 0;
         for (dy = 0; dy < patheight; dy++) {
           for (dx = 0; dx < patwidth; dx++) {
-            if ((x + dx >= WIDTH) || (y + dy >= HEIGHT)) {
+            if ((x + dx >= RESW) || (y + dy >= RESH)) {
+              /* neg */
             } else {
-              if ( entities[j + dx + RESW * y] ) {
+              if ( pattern[ patwidth * dy  + dx ] == entities[j + dx + RESW * dy] ) {
                 match++;
               }
             }
           }
         }
-        if (match == WIDTH * HEIGHT) {
+        if (match == patwidth * patheight) {
           for (dy = 0; dy < patheight; dy++) {
             for (dx = 0; dx < patwidth; dx++) {
-              if ((x + dx >= WIDTH) || (y + dy >= HEIGHT)) {
-                entities[j + dx + RESW * y] = rpattern[dy * patwidth + dx];
+              if ((x + dx >= RESW) || (y + dy >= RESH)) {
+                /* neg */
+              } else {
+                entities[j + dx + RESW * dy] = rpattern[dy * patwidth + dx];
               }
             }
           }
@@ -168,9 +187,9 @@ int main(int v,char**argv){
         } else if (e.key.keysym.sym == '-') {
           brush = max(1,brush-1);
         } else if (e.key.keysym.sym == 'c') {
-          for (int i = 0 ; i < RESW * RESH; i++ ) {
-            entities[i] = NOTHING;
-          }
+          clear( entities );
+        } else if (e.key.keysym.sym == 'b') {
+          blank( entities );
 	} 
         break;
       case SDL_QUIT:
