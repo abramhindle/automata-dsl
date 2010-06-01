@@ -109,6 +109,21 @@
     (match 
      (pattern (:_ :_ :_  :_ :@ :_  :_ :@ :_) 3 3)
      (replace-with
+      (pattern (:_ :@ :_  :_ :@ :_  :_ :@ :_) 3 3)))))
+
+(defun test-automata-2 ()
+;; grow lines
+  '(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (SOMETHING :asymbol :@ :ascii "@" :value 222))
+    (match 
+     (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :_ :@ :_  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :@ :_  :_ :@ :_) 3 3)
+     (replace-with
       (pattern (:_ :@ :_  :_ :@ :_  :_ :@ :_) 3 3)))
     (match 
      (pattern (:_ :@ :_  :_ :@ :_  :_ :_ :_) 3 3)
@@ -205,6 +220,7 @@
   (make-pattern
    (list-to-array (nth 1 p) (nth 2 p) (nth 3 p))))
 
+(defgeneric replace-pattern (p))
 (defmethod replace-pattern (pattern-match)
   (match-pattern (action pattern-match)))
 
@@ -233,7 +249,7 @@
   (let* ((match-sym (first m))
          (mr (rest m))
          (match-pattern (parse-pattern (assoc 'pattern mr)))
-         (name (or (assoc 'name mr) (string (gensym))))
+         (name (or (assoc 'name mr) (symbol-name (gensym))))
          (action (parse-action (first (last mr)))))
     (if (not (equalp 'match match-sym)) (error "not a match!"))
     (make-instance 'pattern-match 
@@ -309,7 +325,7 @@
 (defmethod get-xy ((m pattern) x y)
   (safe-get-xy (pattern-arr m) x y))
 (defmethod get-xy ((m pattern-match) x y)
-  (get-xy (match-pattern m)))
+  (get-xy (match-pattern m) x y))
 
 (defun next-xy (x y w h)
     (let* ((nx (+ 1 x))
@@ -345,6 +361,37 @@
 ;;     )
 ;; )
 ;; 
+
+; basically we just copy the classes
+(defgeneric prototype-action-replace (action r))
+(defmethod prototype-action-replace ((action replace-with) r)
+  (make-instance 'replace-with :match-pattern r))
+;basically we just copy the classes @_@
+(defgeneric prototype-pattern-replace (match p r))
+(defmethod prototype-pattern-replace ((match pattern-match) p r)
+  (make-instance 'pattern-match
+                 :name (format nil "~A~A" (pattern-name match) (rand-name))
+                 :pattern p
+                 :action (prototype-action-replace (action match) r)))
+
+(defun rotate-and-reflect-match (match)
+  (let* ((pattern (match-pattern match))
+         (rpattern (replace-pattern match))
+         (pparr (pattern-arr pattern))
+         (rparr (pattern-arr rpattern))
+         (pprr (reflections-and-rotations pparr (width pattern) (height pattern)))
+         (rprr (reflections-and-rotations rparr (width rpattern) (height rpattern))))
+    (loop 
+       for p in pprr
+       for r in rprr
+       collect (prototype-pattern-replace match (make-pattern p) (make-pattern r)))))
+
+(defun rotate-and-reflect-matches (matches)
+  (loop for m in matches
+     append (rotate-and-reflect-match m) into all-matches
+     finally (return all-matches)))
+
+
 (defun automata-eval (a)
   ; ensure that it is an automata
   ; parse entities
@@ -392,7 +439,8 @@
 
            (generate-n-types (entities)
              (format nil "#define NTYPES ~D~%" (length entities)))
-                  
+
+
 
            )
       (if (not (eq 'AUTOMATA (car a))) (error "not an automata!"))
@@ -402,6 +450,7 @@
              (entities (mapcar #'parse-entity entity-defs))
              (symbol-table (build-symbol-table entities))
              (matches (mapcar #'parse-match match-defs))
+             (matches (rotate-and-reflect-matches matches))
              ; TODO rotate matches etc.
              (def-ntypes (generate-n-types entities)) ; string
              (enum (generate-enum entities)) ; string

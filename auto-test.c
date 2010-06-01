@@ -109,11 +109,11 @@ int main(int v,char**argv){
   SDL_Event e;
   SDL_MouseMotionEvent m;
   int * schedule = malloc( sizeof(int) * RESW * RESH );
+  int * pat_schedule = malloc( sizeof(int) * match_patterns_len );
   Uint8 * bmp = (Uint8*) s->pixels;
   Entity * entities = malloc( sizeof(Entity) * RESW * RESH );
   Entity cursor = types[0];
-  int x, y, j, i, sched, pat, dy, dx;
-  int index;
+  int x, y, j, sched, pat, dy, dx;
   Entity entity;
   int brush = 9; /* brush size */
   atexit(SDL_Quit);
@@ -122,11 +122,16 @@ int main(int v,char**argv){
   /* make the random schedule */
   /* and init Terrain and Entity */
   for (j = 0 ; j < RESW * RESH ; j++ ) {
-    schedule[j] = j;
+    schedule[j] = j;    
   }
+  for (j = 0 ; j < match_patterns_len ; j++ ) {
+    pat_schedule[j] = j;    
+  }
+
   clear( entities );
   shuffle(schedule, RESW * RESH);  
   while (!SDL_Flip(s)) {
+
     /* rand pixel schedule */
     /* there will be garbage at the edges */
     for (sched = 0; sched < (RESW * RESH) ; sched++) { 
@@ -135,9 +140,12 @@ int main(int v,char**argv){
       x = j % RESW;
       y = j / RESW;      
       /* LOGIC HERE */
+      shuffle(pat_schedule, match_patterns_len);
+
       for (pat = 0; pat < match_patterns_len; pat++) {
-        Entity  * pattern  = match_patterns[pat];
-        Entity  * rpattern = replace_patterns[pat];
+        int rpat = pat_schedule[pat];
+        Entity  * pattern  = match_patterns[rpat];
+        Entity  * rpattern = replace_patterns[rpat];
         int patwidth = MWIDTH; /* fix later */
         int patheight = MHEIGHT;
         int match = 0;
