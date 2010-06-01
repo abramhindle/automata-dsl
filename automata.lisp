@@ -345,9 +345,11 @@
 ;;                       (sentities (mapcar (lambda (z) (get-xy z xdepth ydepth)) nset)) ; symbols
 ;;                       (suniq (remove-duplicates sentities)) ; remove duplicates
 ;;                       (xy (next-xy xdepth ydepth mwidth wheight))
-;;                       )
+;;                       )                 
 ;;                  (if (not xy)
-;;                      (replace-at )
+;;                      (loop 
+;;                         for sym in suniq
+;;                         (
 ;;                      (list :replace (mapcar #'mk-replace suniq))
 ;;                      (list :replace ); we're done!
 ;;                      ; we're not done :(
@@ -359,8 +361,47 @@
 ;;                ))
 ;;       )
 ;;     )
-;; )
-;; 
+ ;; )
+
+ (defun tuple (x y) (list x y))
+ (defun tfst (x) (car x))
+ (defun tsnd (x) (cadr x))
+ (defun tlsnd (l) (mapcar #'tsnd l))
+;;     ; (cond (0 0) (NOTHING (cond (0 1) (NOTHING) (SOMETHING))) (SOMETHING (cond (0 1) (NOTHING) (SOMETHING))))
+;;;; XXX TEST THIS IN THE MORNING
+ (defun mk-logic-tree (symbol-table entities matches)
+     (let ((mwidth (loop for x in matches maximize (width x)))
+           (mheight (loop for x in matches maximize (height x))))
+       (labels ((get-entries-at (x y l)
+                  (loop for z in l
+                       for c = (get-xy z x y)
+                       collect (tuple c z) when c))
+                (get-symbols-of-tuples (tuples)
+                  (remove-duplicates (mapcar #'tfst tuples)))
+                (grep-set (sym sset)
+                  (remove-if-not (lambda (x) (equalp (tfst x) sym)) sset))
+                (partition-set (syms sset)
+                  (loop
+                       for sym = syms
+                       collect (tuple sym (grep-set sym sset))))
+                (per-partition (part)
+                  (let* ((sym (tfst part))
+                         (sset (tsnd part))
+                         (xy (next-xy x y mwidth mheight))
+                         (tl (tlsnd sset)))
+                    (if xy                        
+                        (list sym (tree-helper (first xy) (second xy) tl))
+                        (list sym (list matches (mapcar #'pattern-name tl))))))
+                (tree-helper (x y sset) ; set is of matches
+                  (if (and sset (< x mwidth) (< y mheight))
+                      (let ((nset (get-entries-at x y sset))
+                            (syms (get-symbols-of-tuples nset))
+                            (parts (partition-set syms)))
+                        (list 'cond (list x y) 
+                              (mapcar #'per-partition parts)))
+                      '())))
+         (tree-helper 0 0 matches))))
+
 
 ; basically we just copy the classes
 (defgeneric prototype-action-replace (action r))
