@@ -171,38 +171,6 @@ int main(int v,char**argv){
 	}
       } /* per pattern */
  
-#ifdef UGH
-      for (pat = 0; pat < match_patterns_len; pat++) {
-        int rpat = pat_schedule[pat];
-        Entity  * pattern  = match_patterns[rpat];
-        Entity  * rpattern = replace_patterns[rpat];
-        int patwidth = MWIDTH; /* fix later */
-        int patheight = MHEIGHT;
-        int match = 0;
-        for (dy = 0; dy < patheight; dy++) {
-          for (dx = 0; dx < patwidth; dx++) {
-            if ((x + dx >= RESW) || (y + dy >= RESH)) {
-              /* neg */
-            } else {
-              if ( pattern[ patwidth * dy  + dx ] == entities[j + dx + RESW * dy] ) {
-                match++;
-              }
-            }
-          }
-        }
-        if (match == patwidth * patheight) {
-          for (dy = 0; dy < patheight; dy++) {
-            for (dx = 0; dx < patwidth; dx++) {
-              if ((x + dx >= RESW) || (y + dy >= RESH)) {
-                /* neg */
-              } else {
-                entities[j + dx + RESW * dy] = rpattern[dy * patwidth + dx];
-              }
-            }
-          }
-        }
-      } /* per pattern */
-#endif
     } /* per pixel */
 
     /* now draw the buffer! */
