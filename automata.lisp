@@ -529,7 +529,7 @@
      finally (return all-matches)))
 
 
-(defun automata-eval (a)
+(defun automata-eval (a &optional (filename "auto-test.h"))
   ; ensure that it is an automata
   ; parse entities
   ; - build a symbol table 
@@ -612,7 +612,7 @@
              (logic-function (make-logic-function logic-str))
              ;  (logic-block (generate-logic-block symbol-table entities matches))
              )
-        (with-open-file (f "auto-test.h" :direction :output)
+        (with-open-file (f filename :direction :output)
           (format f "~A"
            (s% (append (list def-ntypes enum incstr  palette to-char-fun) replacements (list pattern-match-arr replace-match-arr logic-function)))
            )))))
@@ -633,3 +633,10 @@
 
 (defun test-automata-eval ()
   (automata-eval (test-automata-1)))
+
+(defun read-and-eval-automata (in-file)
+  (with-open-file (f in-file :direction :input)
+    (let ((exp (read f)))
+      (automata-eval exp))))
+
+

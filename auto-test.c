@@ -39,8 +39,8 @@ the original source code.  */
 #define COFF 0
 #define WEIGHT(VAL) VAL
 #define MAXBUFFER 1024
-#define RESW 320
-#define RESH 240
+#define RESW 640
+#define RESH 480
 #define BPP 8
 #define COLOR(VAL) (VAL)
 /* , VAL2) ((Uint8)(!VAL==NOTHING?VAL2:VAL)) */
@@ -105,7 +105,7 @@ void blank(Entity * entities) {
   }
 }
 
-#define BENCH 1
+/* define BENCH 1 */
 
 int main(int v,char**argv){
 
@@ -141,16 +141,19 @@ int main(int v,char**argv){
 #ifdef BENCH
     if (frames == 100) { exit(0); }
 #endif
-
+    shuffle(pat_schedule, match_patterns_len);
     /* rand pixel schedule */
     /* there will be garbage at the edges */
     for (sched = 0; sched < (RESW * RESH) ; sched++) { 
+      if (rand_decision(1,RESW)) {
+        shuffle(pat_schedule, match_patterns_len);
+      }
       j  = schedule[sched]; 
       entity = entities[j];
       x = j % RESW;
       y = j / RESW;      
       /* LOGIC HERE */
-      shuffle(pat_schedule, match_patterns_len);
+
       for (pat = 0; pat < match_patterns_len; pat++) {
         matches[pat] = 0;
       }
