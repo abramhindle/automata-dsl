@@ -49,8 +49,8 @@ the original source code.  */
 
 #define WEIGHT(VAL) VAL
 #define MAXBUFFER 1024
-#define RESW 640
-#define RESH 480
+#define RESW 320
+#define RESH 240
 #define BPP 8
 #define COLOR(VAL) (VAL)
 /* , VAL2) ((Uint8)(!VAL==NOTHING?VAL2:VAL)) */
