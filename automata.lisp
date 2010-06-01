@@ -410,20 +410,21 @@
                            (cases (cddr leaf))
                            (in (indentation depth)))
                        (concatenate 'string
-                                    (format nil "~Aswitch( ENTITY_AT(~D,~D, x, y) ) {~%" in (first dxdy) (second dxdy))
+                                    (format nil "~Aent = ENTITY_AT(~D,~D, x, y) ;~%" in (first dxdy) (second dxdy))
                                     (format nil "~{~%~A~}"  ; join w/ newline
                                             (mapcar 
                                              (lambda (c) 
                                                (let* ((sym (first c))
                                                       (ssym (symbol-name (esymbol (resolve-symbol symt sym))))
                                                       (exp (second c)))
-                                                 (format nil "~Acase ~A:~%~A~%~Abreak;" 
+                                                 (format nil "~Aif ( ent == ~A) {~%~A~%~A} else~%" 
                                                          in 
                                                          ssym 
                                                          (helper (+ 1 depth) exp) 
+
                                                          in))) 
                                              cases))
-                                    (format nil "~%~Adefault: return;~%~A};~%" in in))))
+                                    (format nil "~%~A{ return;~%~A}~%" in in))))
                ('matches (let (;(matches-sym (first leaf))
                               (matching-pattern-names (rest leaf))
                               (in (indentation depth)))
@@ -495,7 +496,7 @@
     
 
 (defun make-logic-function (logic-str)
-  (format nil "void automata_matcher( Entity * entities, int * matches, int x, int y) {~%~A~%}~%" logic-str))
+  (format nil "void automata_matcher( Entity * entities, int * matches, int x, int y) {~%  Entity ent;~%~A~%}~%" logic-str))
     
 
 ; basically we just copy the classes
