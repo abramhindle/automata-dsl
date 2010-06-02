@@ -1,0 +1,23 @@
+Automata DSL
+
+Define a random cellular automata game that will be compiled down to something
+managable that will actually run on a large world (640x480) on a reasonable
+machine (1.7ghz works).
+
+You define an input automata file with patterns and replacement patterns then
+the common lisp automata generator (see from-file in Makefile) rotates and
+reflects said patterns and produces a C program (a .h file to be included in
+auto-test.c) written in SDL that lets you play with your automata.
+
+The concepts are entities, patterns and matches and replacements.
+
+The number keys change the current entity of your mouse cursor.
+'x' exits
+'c' resets the world
+'b' blanks the world
+'+' increases cursor size
+'-' decreases cursor size
+
+You'll need the SDL devel packages installed to make the software.
+
+License info: GNU Public License version 3 (c) 2010 Abram Hindle
