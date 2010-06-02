@@ -49,7 +49,8 @@ the original source code.  */
 #define IMPOSSIBLE (-1)
 
 
-#define ENTITY_AT( DX, DY, X, Y ) ( entity_at( entities, DX, DY, X, Y ) )
+#define ENTITY_AT( DX, DY, X, Y ) ( entity_at( entities, DX, DY, X, Y ) ) 
+/* define ENTITY_AT( DX, DY, X, Y ) (( BOUNDS( (DX + X), (DY + Y) ) )?(entities[ DX + X + (DY + Y ) * RESW ]):IMPOSSIBLE)*/
 #define PATTERN_MATCH_AT( INDEX, X, Y ) ( matches[ INDEX ]++ )
 
 #include "auto-test.h"
@@ -143,11 +144,11 @@ int main(int v,char**argv){
 #endif
     shuffle(pat_schedule, match_patterns_len);
     /* rand pixel schedule */
-    /* there will be garbage at the edges */
+
     for (sched = 0; sched < (RESW * RESH) ; sched++) { 
       if (rand_decision(1,RESW)) {
         shuffle(pat_schedule, match_patterns_len);
-      }
+      } 
       j  = schedule[sched]; 
       entity = entities[j];
       x = j % RESW;
