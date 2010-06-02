@@ -6,12 +6,12 @@ auto-test: auto-test.c auto-test.h
 	gcc -Wall -pedantic -std=c99 -O3 -lSDL -lm auto-test.c -o auto-test
 
 clean:
-	rm auto-test.h auto-test || echo lol
+	rm auto-test.h auto-test auto-from-file || echo lol
 
-from-file: automata.lisp input.automata
+auto-from-file: automata.lisp input.automata
 	rm auto-test.h || echo lol
 	sbcl --load automata-eval-file.lisp
-	gcc -Wall -pedantic -std=c99 -O3  -lSDL -lm auto-test.c -o auto-test
+	gcc -Wall -pedantic -std=c99 -O3  -lSDL -lm auto-test.c -o auto-from-file
 
 auto: auto.c
 	gcc -Wall -pedantic -std=c99 -O3 -lHarbinger -lSDL -lm auto.c -o auto
