@@ -16,7 +16,7 @@ auto-from-file: automata.lisp input.automata
 auto: auto.c
 	gcc -Wall -pedantic -std=c99 -O3 -lHarbinger -lSDL -lm auto.c -o auto
 
-%: %.automata
+%: %.automata auto-test.c automata.lisp
 	cp $< input.automata
 	rm auto-test.h || echo lol
 	sbcl --load automata-eval-file.lisp

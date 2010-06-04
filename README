@@ -20,6 +20,10 @@ The number keys change the current entity of your mouse cursor.
 
 You'll need the SDL devel packages installed to make the software.
 
+To build your automata use one of the sample files (*.automata) and then type:
+
+make Automataname given a file: Automataname.automata
+
 For a demo of the automata running check out this playlist: http://bit.ly/bU952C
 Alternatively check out these videos:
 http://churchturing.org/y/automata-out-23.ogv
