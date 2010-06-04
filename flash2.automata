@@ -1,0 +1,38 @@
+(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (LIGHT :asymbol :@ :ascii "@" :value 222)
+     (FLASH :asymbol :X :ascii "X" :value 191)
+     (EATER :asymbol :E :ascii "E" :value 69))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :@) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :@ :@  :_ :@ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :@ :@  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :X :_  :_ :X :X  :_ :X :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :X) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :@ :@  :_ :@ :_) 3 3)))
+    (match 
+     (pattern (:@ :@ :@  :@ :@ :@  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :X :X :X  :_ :X :_) 3 3)))
+    (match 
+     (pattern (:_ :X :_  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :X :_ :X  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:E :@ :@  :@ :@ :@  :@ :@ :@) 3 3)
+     (replace-with
+      (pattern (:E :E :@  :E :@ :@  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:E :X :X  :X :X :X  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:E :E :X  :E :X :X  :X :X :X) 3 3)))
+    (match 
+     (pattern (:E :_ :_  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:E :E :_  :E :_ :_  :_ :_ :_) 3 3))))

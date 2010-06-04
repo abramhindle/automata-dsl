@@ -1,0 +1,58 @@
+(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (WIRE :asymbol :O :ascii "O" :value 192)
+     (FLASH :asymbol :@ :ascii "@" :value 222)
+     (ZAP :asymbol :X :ascii "X" :value 252))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:O :@ :O  :O :@ :O  :O :@ :O) 3 3)))
+    (match 
+     (pattern (:O :O :@  :O :O :@  :O :O :@) 3 3)
+     (replace-with
+      (pattern (:O :@ :O  :O :@ :O  :O :@ :O) 3 3)))
+    (match 
+     (pattern (:O :@ :@  :@ :O :O  :O :O :O) 3 3)
+     (replace-with
+      (pattern (:O :O :O  :O :O :O  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:O :O :O  :O :O :@  :O :O :@) 3 3)
+     (replace-with
+      (pattern (:O :O :O  :O :@ :O  :O :@ :O) 3 3)))
+    (match 
+     (pattern (:O :O :O  :O :@ :@  :O :O :O) 3 3)
+     (replace-with
+      (pattern (:O :X :X  :O :O :O  :O :@ :@) 3 3)))
+    (match 
+     (pattern (:O :O :O  :O :X :X  :O :O :O) 3 3)
+     (replace-with
+      (pattern (:@ :@ :O  :O :O :O  :O :X :X) 3 3)))
+    (match 
+     (pattern (:O :O :O  :O :X :O  :O :O :O) 3 3)
+     (replace-with
+      (pattern (:O :O :O  :O :O :O  :X :X :X) 3 3)))
+    (match 
+     (pattern (:X :X :X  :X :X :X  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:X :X :X  :X :X :X  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:O :O :O  :O :@ :O  :O :@ :O) 3 3)))
+    (match 
+     (pattern (:X :X :O  :X :X :O  :O :O :O) 3 3)
+     (replace-with
+      (pattern (:X :X :X  :O :O :O  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:X :X :X  :X :O :O  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :O :O :O  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:X :X :X  :@ :@ :@  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :O :O :O  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:X :X :X  :@ :@ :@  :X :X :@) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :O :O :O  :@ :@ :@) 3 3))))

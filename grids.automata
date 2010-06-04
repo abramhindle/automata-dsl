@@ -1,0 +1,40 @@
+(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (SOMETHING :asymbol :@ :ascii "@" :value 222)
+     (ANOTHER :asymbol :K :ascii "K" :value 191)
+     (BIGGERNOTHER :asymbol :R :ascii "R" :value 195))
+
+    (match 
+     (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :@ :@ :@  :_ :@ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :@  :_ :@ :@  :_ :_ :@) 3 3)
+     (replace-with
+      (pattern (:_ :_ :@  :@ :@ :@  :_ :_ :@) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :@ :@  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :@ :@ :@  :_ :@ :_) 3 3)))
+    (match 
+     (pattern (:K :_ :_  :K :@ :@  :K :_ :_) 3 3)
+     (replace-with
+      (pattern (:K :_ :K  :K :K :K  :K :_ :K) 3 3)))
+    (match 
+     (pattern (:K :_ :_  :K :@ :@  :K :_ :_) 3 3)
+     (replace-with
+      (pattern (:K :_ :_  :K :K :K  :K :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :@ :_  :K :@ :@  :_ :@ :_) 3 3)
+     (replace-with
+      (pattern (:_ :K :_  :K :K :K  :_ :K :_) 3 3)))
+    (match 
+     (pattern (:_ :K :_  :R :K :K  :_ :K :_) 3 3)
+     (replace-with
+      (pattern (:_ :R :_  :R :R :R  :_ :R :_) 3 3)))
+    (match 
+     (pattern (:_ :R :_  :@ :R :R  :_ :R :_) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :@ :@ :@  :_ :@ :_) 3 3)))
+)

@@ -1,0 +1,19 @@
+(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (SOMETHING :asymbol :@ :ascii "@" :value 222))
+
+    (match 
+     (pattern (:_ :_ :_  :_ :@ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:@ :_ :_  :_ :@ :_  :_ :_ :_) 3 3)))
+
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :@ :@) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :@ :_ :_  :_ :@ :@) 3 3)))
+
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :@) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :@ :@ :_  :_ :_ :@) 3 3))))

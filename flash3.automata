@@ -1,0 +1,45 @@
+(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (LIGHT :asymbol :@ :ascii "@" :value 222)
+     (FLASH :asymbol :X :ascii "X" :value 91))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :@ :@ :@) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :@ :@ :@  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :X :X :X  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :X :X) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :X :X :X  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:X :X :X  :_ :_ :_  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:X :_ :X  :_ :X :_  :X :_ :X) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :@ :@ :@  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:@ :@ :@  :@ :@ :@  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:X :X :X  :@ :@ :@  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:@ :@ :X  :@ :@ :X  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:@ :@ :@  :@ :@ :@  :X :X :X) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :X :X :X  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:@ :@ :@  :@ :@ :@  :@ :@ :X) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :X :X :X  :@ :@ :@) 3 3)))
+    (match 
+     (pattern (:X :X :X  :X :X :X  :@ :@ :@) 3 3)
+     (replace-with
+      (pattern (:X :X :X  :@ :@ :@  :X :X :X) 3 3))))

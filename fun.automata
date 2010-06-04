@@ -1,0 +1,34 @@
+(automata
+    (entities
+     (NOTHING   :asymbol :_ :ascii "_" :value 0 ) ;asymbol means alt symbol
+     (SOMETHING :asymbol :@ :ascii "@" :value 222)
+     (FIRE :asymbol :F :ascii "F" :value 91))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :@) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :@  :_ :@ :@) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :@) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :_ :_ :@  :_ :_ :@) 3 3)))
+    (match 
+     (pattern (:_ :@ :_  :_ :_ :@  :_ :@ :F) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :_ :_ :F  :_ :F :_) 3 3)))
+    (match 
+     (pattern (:_ :@ :_  :_ :_ :@  :_ :@ :F) 3 3)
+     (replace-with
+      (pattern (:_ :@ :_  :_ :_ :F  :_ :F :_) 3 3)))
+    (match 
+     (pattern (:@ :_ :_  :_ :_ :@  :_ :@ :F) 3 3)
+     (replace-with
+      (pattern (:@ :_ :_  :_ :_ :F  :_ :F :_) 3 3)))
+    (match 
+     (pattern (:@ :@ :@  :@ :@ :@  :@ :@ :F) 3 3)
+     (replace-with
+      (pattern (:@ :@ :@  :@ :@ :F :@ :F :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :@  :_ :@ :F) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :F  :_ :F :_) 3 3))))
+

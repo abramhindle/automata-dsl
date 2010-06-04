@@ -1,0 +1,103 @@
+(automata
+    (entities
+     (AEARTH   :asymbol :_ :ascii "_" :value 0 )
+     (ATREE   :asymbol :T :ascii "T" :value 40 )
+     (AROAD   :asymbol :R :ascii "R" :value 90 )
+     (AWALL :asymbol :W :ascii "#" :value 200)
+     (AFLOOR :asymbol :o :ascii "." :value 222))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :T :_) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :_  :T :T :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :R :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :R :R :R  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :T  :R :R :R  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :_ :R  :R :R :R  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :R) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :_  :R :R :R) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :T :R) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :_  :R :R :R) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :R  :_ :T :R) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :_ :R  :R :R :R) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :R :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :R :_  :R :R :R  :_ :R :_) 3 3)))
+    (match 
+     (pattern (:T :T :T  :T :R :T  :T :T :T) 3 3)
+     (replace-with
+      (pattern (:T :T :T  :R :R :R  :T :T :T) 3 3)))
+    (match 
+     (pattern (:T :T :T  :R :R :R  :T :T :T) 3 3)
+     (replace-with
+      (pattern (:T :T :R  :R :R :R  :T :T :T) 3 3)))
+    (match 
+     (pattern (:T :T :T  :T :T :T  :T :T :R) 3 3)
+     (replace-with
+      (pattern (:T :T :T  :T :T :T  :R :R :R) 3 3)))
+    (match 
+     (pattern (:T :T :T  :T :T :T  :T :T :R) 3 3)
+     (replace-with
+      (pattern (:T :T :T  :T :T :T  :R :R :R) 3 3)))
+    (match 
+     (pattern (:T :T :T  :T :T :R  :T :T :R) 3 3)
+     (replace-with
+      (pattern (:T :T :T  :T :T :R  :R :R :R) 3 3)))
+    (match 
+     (pattern (:T :T :T  :T :R :T  :T :T :T) 3 3)
+     (replace-with
+      (pattern (:T :R :T  :R :R :R  :T :R :T) 3 3)))
+    (match 
+     (pattern (:_ :W :_  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :W :_  :_ :W :_  :_ :W :_) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :W :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :W :_  :W :W :W  :_ :W :_) 3 3)))
+    (match 
+     (pattern (:_ :W :W  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :W :W  :_ :o :o  :_ :o :o) 3 3)))
+    (match 
+     (pattern (:_ :_ :_  :_ :_ :_  :_ :_ :o) 3 3)
+     (replace-with
+      (pattern (:_ :_ :_  :_ :W :W  :_ :W :o) 3 3)))
+    (match 
+     (pattern (:W :W :W  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:W :W :W  :o :o :o  :o :o :o) 3 3)))
+    (match 
+     (pattern (:o :o :o  :o :o :o  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:o :o :o  :o :o :o  :W :W :W) 3 3)))
+    (match 
+     (pattern (:o :o :_  :o :o :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:o :o :o  :o :o :o  :o :o :o) 3 3)))
+    (match 
+     (pattern (:o :o :_  :o :o :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:o :o :W  :o :o :W  :W :W :W) 3 3)))
+    (match 
+     (pattern (:_ :W :_  :_ :_ :_  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:_ :W :W  :_ :o :o  :_ :_ :_) 3 3)))
+    (match 
+     (pattern (:_ :W :W  :_ :o :o  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:W :W :W  :o :o :o  :o :o :o) 3 3)))
+    (match 
+     (pattern (:_ :W :W  :_ :o :o  :_ :_ :_) 3 3)
+     (replace-with
+      (pattern (:W :W :W  :W :o :o  :W :o :o) 3 3))))
